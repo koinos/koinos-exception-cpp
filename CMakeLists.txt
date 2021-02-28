@@ -87,6 +87,7 @@ endif()
 hunter_add_package(Boost COMPONENTS exception)
 hunter_add_package(nlohmann_json)
 hunter_add_package(koinos_log)
+hunter_add_package(koinos_types)
 
 add_subdirectory(libraries)
 if (BUILD_TESTS)
