@@ -7,15 +7,15 @@ hunter_config(Boost
 )
 
 hunter_config(koinos_log
-   URL "https://github.com/koinos/koinos-log-cpp/archive/v0.1.0.tar.gz"
-   SHA1 "bc27602cd82a3f3849796ec0d6de37d3841a19ea"
+   URL "https://github.com/koinos/koinos-log-cpp/archive/4ecb8399d05d1639c52a34845f55aa826f35d484.tar.gz"
+   SHA1 "1b11e2acadd4d37a483944096bed916ba579637d"
    CMAKE_ARGS
       BUILD_TESTS=OFF
 )
 
 hunter_config(koinos_types
-   URL "https://github.com/koinos/koinos-types/archive/v0.1.0-alpha.tar.gz"
-   SHA1 "0bd263981ae87ef1276ff4f9a483d48ba1277277"
+   URL "https://github.com/koinos/koinos-types/archive/d8a9db91761d8aa84723f0b0b5b12e032fad9fa9.tar.gz"
+   SHA1 "3764a668d7e0f6c5876f522f11bdc39cbdbbba8b"
    CMAKE_ARGS
       BUILD_TESTS=OFF
 )
