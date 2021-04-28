@@ -16,7 +16,7 @@ std::string trim_quotes( std::string&& s )
    return s;
 }
 
-std::string json_strpolate( const std::string& format_str, const nlohmann::json& j )
+std::string json_strpolate( const std::string& format_str, const koinos::pack::json& j )
 {
    std::string key;
    bool has_key;
@@ -112,12 +112,19 @@ const char* exception::what() const noexcept
 
 std::string exception::get_stacktrace() const
 {
-   std::stringstream ss;
-   ss << *boost::get_error_info< koinos::detail::exception_stacktrace >( *this );
-   return ss.str();
+   std::string value;
+
+   if ( auto s = boost::get_error_info< koinos::detail::exception_stacktrace >( *this ); s != nullptr )
+   {
+      std::stringstream ss;
+      ss << *s;
+      value = ss.str();
+   }
+
+   return value;
 }
 
-const nlohmann::json& exception::get_json() const
+const koinos::pack::json& exception::get_json() const
 {
    return *boost::get_error_info< koinos::detail::json_info >( *this );
 }

@@ -215,6 +215,17 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( "An exception ${with a malformed token", e.what() );
    }
 
+   BOOST_TEST_MESSAGE( "Throw an exception without using the provided macros." );
+   try
+   {
+      throw my_exception( "An exception" );
+   }
+   catch( koinos::exception& e )
+   {
+      BOOST_REQUIRE_EQUAL( e.get_json(), koinos::pack::json() );
+      BOOST_REQUIRE_EQUAL( e.get_stacktrace(), std::string() );
+   }
+
 } KOINOS_CATCH_LOG_AND_RETHROW(info) }
 
 BOOST_AUTO_TEST_SUITE_END()

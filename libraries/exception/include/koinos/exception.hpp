@@ -4,8 +4,6 @@
 #include <boost/exception/all.hpp>
 #include <boost/stacktrace.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <koinos/log.hpp>
 #include <koinos/pack/rt/json.hpp>
 
@@ -105,7 +103,7 @@ struct exception : virtual boost::exception, virtual std::exception
       virtual const char* what() const noexcept override;
 
       std::string get_stacktrace() const;
-      const nlohmann::json& get_json() const;
+      const koinos::pack::json& get_json() const;
       const std::string& get_message() const;
 
    private:
@@ -117,10 +115,10 @@ struct exception : virtual boost::exception, virtual std::exception
 
 namespace detail {
 
-using json_info = boost::error_info< struct json_tag, nlohmann::json >;
+using json_info = boost::error_info< struct json_tag, koinos::pack::json >;
 using exception_stacktrace = boost::error_info< struct stacktrace_tag, boost::stacktrace::stacktrace >;
 
-std::string json_strpolate( const std::string& format_str, const nlohmann::json& j );
+std::string json_strpolate( const std::string& format_str, const koinos::pack::json& j );
 
 /**
  * Initializes a json object using a bubble list of key value pairs.
@@ -128,7 +126,7 @@ std::string json_strpolate( const std::string& format_str, const nlohmann::json&
 struct json_initializer
 {
    exception& _e;
-   nlohmann::json& _j;
+   koinos::pack::json& _j;
 
    json_initializer() = delete;
    json_initializer( exception& e );
@@ -156,7 +154,7 @@ struct json_initializer
    template< typename T >
    typename std::enable_if_t< !std::is_trivial_v< T >, json_initializer& > operator()( const T& t )
    {
-      nlohmann::json obj_json;
+      koinos::pack::json obj_json;
       koinos::pack::to_json( obj_json, t );
       _j.merge_patch( obj_json );
       _e.do_message_substitution();
@@ -166,7 +164,7 @@ struct json_initializer
    template< typename T >
    typename std::enable_if_t< !std::is_trivial_v< T >, json_initializer& > operator()( T&& t )
    {
-      nlohmann::json obj_json;
+      koinos::pack::json obj_json;
       koinos::pack::to_json( obj_json, std::forward< T >( t ) );
       _j.merge_patch( obj_json );
       _e.do_message_substitution();
