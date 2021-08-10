@@ -1,17 +1,10 @@
 #include <boost/test/unit_test.hpp>
 
 #include <koinos/exception.hpp>
-#include <koinos/pack/rt/reflect.hpp>
 
 #include <iostream>
 
-struct exception_test_object
-{
-   uint32_t x = 0;
-   uint32_t y = 0;
-};
-
-KOINOS_REFLECT( exception_test_object, (x)(y) )
+#include "test_object.capnp.h"
 
 struct exception_fixture {};
 
@@ -77,15 +70,24 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( e.what(), e.get_message() );
    }
 
-   BOOST_TEST_MESSAGE( "Throw an exception with an initial const object capture and a missing capture." );
+   BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
    try
    {
+      capnp::MallocMessageBuilder m1;
+      auto outerObj = m1.initRoot< ExceptionTestObject >();
+      outerObj.setX(3);
+      outerObj.setY(4);
+
       try
       {
-         const exception_test_object obj = {1,2};
-         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", obj) );
+         capnp::MallocMessageBuilder m2;
+         auto innerObj = m2.initRoot< ExceptionTestObject >();
+         innerObj.setX(1);
+         innerObj.setY(2);
+
+         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", innerObj) );
       }
-      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",exception_test_object{3,4}) )
+      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",outerObj) )
    }
    catch( koinos::exception& e )
    {
@@ -102,12 +104,21 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
    try
    {
+      capnp::MallocMessageBuilder m1;
+      auto outerObj = m1.initRoot< ExceptionTestObject >();
+      outerObj.setX(3);
+      outerObj.setY(4);
+
       try
       {
-         exception_test_object obj = {1,2};
-         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", obj) );
+         capnp::MallocMessageBuilder m2;
+         auto innerObj = m2.initRoot< ExceptionTestObject >();
+         innerObj.setX(1);
+         innerObj.setY(2);
+
+         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", std::move(innerObj)) );
       }
-      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",exception_test_object{3,4}) )
+      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",outerObj) )
    }
    catch( koinos::exception& e )
    {
@@ -124,7 +135,11 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit const object capture." );
    try
    {
-      const exception_test_object obj = {1,2};
+      capnp::MallocMessageBuilder m;
+      auto obj = m.initRoot< ExceptionTestObject >();
+      obj.setX(1);
+      obj.setY(2);
+
       KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (obj) );
    }
    catch( koinos::exception& e )
@@ -139,8 +154,12 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit object capture." );
    try
    {
-      exception_test_object obj = {1,2};
-      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (obj) );
+      capnp::MallocMessageBuilder m;
+      auto obj = m.initRoot< ExceptionTestObject >();
+      obj.setX(1);
+      obj.setY(2);
+
+      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (std::move(obj)) );
    }
    catch( koinos::exception& e )
    {
@@ -222,7 +241,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    }
    catch( koinos::exception& e )
    {
-      BOOST_REQUIRE_EQUAL( e.get_json(), koinos::pack::json() );
+      BOOST_REQUIRE_EQUAL( e.get_json(), nlohmann::json() );
       BOOST_REQUIRE_EQUAL( e.get_stacktrace(), std::string() );
    }
 
