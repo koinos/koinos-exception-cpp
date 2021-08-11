@@ -142,27 +142,6 @@ struct json_initializer
 
    template< typename T >
    typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
-   operator()( const std::string& key, T&& t )
-   {
-      capnp::JsonCodec c;
-      c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( std::forward< T >( t ) );
-      _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   typename std::enable_if< !std::is_class< typename T::Builds >::value, json_initializer& >::type
-   operator()( const std::string& key, T&& t )
-   {
-      _j[key] = std::forward< T >( t );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
    operator()( const std::string& key, const T& t )
    {
       capnp::JsonCodec c;
@@ -171,6 +150,13 @@ struct json_initializer
       _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
       _e.do_message_substitution();
       return *this;
+   }
+
+   template< typename T >
+   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   operator()( const std::string& key, T&& t )
+   {
+      return this->operator()( key, t );
    }
 
    template< typename T >
@@ -183,15 +169,10 @@ struct json_initializer
    }
 
    template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
-   operator()( T&& t )
+   typename std::enable_if< !std::is_class< typename T::Builds >::value, json_initializer& >::type
+   operator()( const std::string& key, T&& t )
    {
-      capnp::JsonCodec c;
-      c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( std::forward< T > ( t ) );
-      _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
-      _e.do_message_substitution();
-      return *this;
+      return this->operator()( key, t );
    }
 
    template< typename T >
@@ -204,6 +185,13 @@ struct json_initializer
       _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
       _e.do_message_substitution();
       return *this;
+   }
+
+   template< typename T >
+   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   operator()( T&& t )
+   {
+      return this->operator()( t );
    }
 };
 
