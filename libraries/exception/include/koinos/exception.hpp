@@ -146,7 +146,7 @@ struct json_initializer
    {
       capnp::JsonCodec c;
       c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( t );
+      auto json_str = c.encode( std::forward< T >( t ) );
       _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
       _e.do_message_substitution();
       return *this;
@@ -184,11 +184,11 @@ struct json_initializer
 
    template< typename T >
    typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
-   operator()( const T& t )
+   operator()( T&& t )
    {
       capnp::JsonCodec c;
       c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( t );
+      auto json_str = c.encode( std::forward< T > ( t ) );
       _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
       _e.do_message_substitution();
       return *this;
@@ -196,7 +196,7 @@ struct json_initializer
 
    template< typename T >
    typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
-   operator()( T&& t )
+   operator()( const T& t )
    {
       capnp::JsonCodec c;
       c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
