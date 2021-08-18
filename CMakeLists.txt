@@ -31,8 +31,8 @@ set(
 include("cmake/HunterGate.cmake")
 
 HunterGate(
-   URL "https://github.com/cpp-pm/hunter/archive/v0.23.289.tar.gz"
-   SHA1 "7d7323704780200a1575fc089d26f8a8a393a1fa"
+   URL "https://github.com/cpp-pm/hunter/archive/v0.23.313.tar.gz"
+   SHA1 "6c369e5aab2749a616917df3b23511535f413604"
    LOCAL
 )
 
@@ -85,10 +85,15 @@ if(COVERAGE)
      EXCLUDE "libraries/vendor/*" "build/generated/*")
 endif()
 
-hunter_add_package(Boost COMPONENTS exception)
+hunter_add_package(Boost COMPONENTS exception test)
 hunter_add_package(Protobuf)
 hunter_add_package(nlohmann_json)
 hunter_add_package(koinos_log)
+
+find_package(Protobuf CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(koinos_log CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED exception)
 
 add_subdirectory(libraries)
 if (BUILD_TESTS)

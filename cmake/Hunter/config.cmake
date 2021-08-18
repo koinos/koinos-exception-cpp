@@ -1,5 +1,5 @@
 hunter_config(Boost
-   VERSION "1.72.0-p1"
+   VERSION ${HUNTER_Boost_VERSION}
    CMAKE_ARGS
       USE_CONFIG_FROM_BOOST=ON
       Boost_USE_STATIC_LIBS=ON
@@ -7,8 +7,8 @@ hunter_config(Boost
 )
 
 hunter_config(koinos_log
-   URL  "https://github.com/koinos/koinos-log-cpp/archive/414e9a483a20a674eb46a95e0ca27d4b0b9fe13d.tar.gz"
-   SHA1 "79defc4a4db453c902708c45f4cc7e53c2b6d7bf"
+   URL  "https://github.com/koinos/koinos-log-cpp/archive/8a148b2839116e060b3327fe6358210dd2a55f4d.tar.gz"
+   SHA1 "8075e5882ffc5d450b35521792dcf6b29027cebd"
    CMAKE_ARGS
       BUILD_TESTS=OFF
 )
