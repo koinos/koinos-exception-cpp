@@ -7,13 +7,9 @@ hunter_config(Boost
 )
 
 hunter_config(koinos_log
-   URL  "https://github.com/koinos/koinos-log-cpp/archive/4ecb8399d05d1639c52a34845f55aa826f35d484.tar.gz"
-   SHA1 "1b11e2acadd4d37a483944096bed916ba579637d"
+   URL  "https://github.com/koinos/koinos-log-cpp/archive/414e9a483a20a674eb46a95e0ca27d4b0b9fe13d.tar.gz"
+   SHA1 "79defc4a4db453c902708c45f4cc7e53c2b6d7bf"
    CMAKE_ARGS
       BUILD_TESTS=OFF
 )
 
-hunter_config(koinos_proto
-   URL  "https://github.com/koinos/koinos-proto-cpp/archive/a756ce9cbbfb9c3bc7d3c00fbbab381ba11619e1.tar.gz"
-   SHA1 "c6a576625b007bf5234d4149e10a6d92345a6a77"
-)
