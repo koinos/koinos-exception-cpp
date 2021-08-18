@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "test_object.capnp.h"
+#include "test_object.pb.h"
 
 struct exception_fixture {};
 
@@ -73,21 +73,19 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
    try
    {
-      capnp::MallocMessageBuilder m1;
-      auto outerObj = m1.initRoot< ExceptionTestObject >();
-      outerObj.setX(3);
-      outerObj.setY(4);
+      test_object outer_obj;
+      outer_obj.set_x( 3 );
+      outer_obj.set_y( 4 );
 
       try
       {
-         capnp::MallocMessageBuilder m2;
-         auto innerObj = m2.initRoot< ExceptionTestObject >();
-         innerObj.setX(1);
-         innerObj.setY(2);
+         test_object inner_obj;
+         inner_obj.set_x( 1 );
+         inner_obj.set_y( 2 );
 
-         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", innerObj) );
+         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", inner_obj) );
       }
-      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",outerObj) )
+      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z", outer_obj) )
    }
    catch( koinos::exception& e )
    {
@@ -104,21 +102,19 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
    try
    {
-      capnp::MallocMessageBuilder m1;
-      auto outerObj = m1.initRoot< ExceptionTestObject >();
-      outerObj.setX(3);
-      outerObj.setY(4);
+      test_object outer_obj;
+      outer_obj.set_x( 3 );
+      outer_obj.set_y( 4 );
 
       try
       {
-         capnp::MallocMessageBuilder m2;
-         auto innerObj = m2.initRoot< ExceptionTestObject >();
-         innerObj.setX(1);
-         innerObj.setY(2);
+         test_object inner_obj;
+         inner_obj.set_x( 1 );
+         inner_obj.set_y( 2 );
 
-         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", std::move(innerObj)) );
+         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", std::move( inner_obj )) );
       }
-      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z",outerObj) )
+      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z", outer_obj) )
    }
    catch( koinos::exception& e )
    {
@@ -135,10 +131,9 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit const object capture." );
    try
    {
-      capnp::MallocMessageBuilder m;
-      auto obj = m.initRoot< ExceptionTestObject >();
-      obj.setX(1);
-      obj.setY(2);
+      test_object obj;
+      obj.set_x( 1 );
+      obj.set_y( 2 );
 
       KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (obj) );
    }
@@ -154,12 +149,11 @@ BOOST_AUTO_TEST_CASE( exception_test )
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit object capture." );
    try
    {
-      capnp::MallocMessageBuilder m;
-      auto obj = m.initRoot< ExceptionTestObject >();
-      obj.setX(1);
-      obj.setY(2);
+      test_object obj;
+      obj.set_x( 1 );
+      obj.set_y( 2 );
 
-      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (std::move(obj)) );
+      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (std::move( obj )) );
    }
    catch( koinos::exception& e )
    {

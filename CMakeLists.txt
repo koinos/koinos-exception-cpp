@@ -86,7 +86,7 @@ if(COVERAGE)
 endif()
 
 hunter_add_package(Boost COMPONENTS exception)
-hunter_add_package(CapnProto)
+hunter_add_package(Protobuf)
 hunter_add_package(nlohmann_json)
 hunter_add_package(koinos_log)
 

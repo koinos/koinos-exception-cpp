@@ -4,9 +4,7 @@
 #include <boost/exception/all.hpp>
 #include <boost/stacktrace.hpp>
 
-#include <capnp/schema.h>
-#include <capnp/serialize-packed.h>
-#include <capnp/compat/json.h>
+#include <google/protobuf/util/json_util.h>
 
 #include <nlohmann/json.hpp>
 
@@ -141,26 +139,31 @@ struct json_initializer
    json_initializer& operator()();
 
    template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( const std::string& key, const T& t )
    {
-      capnp::JsonCodec c;
-      c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( t );
+      std::string json_str;
+
+      google::protobuf::util::JsonPrintOptions options;
+      options.add_whitespace = true;
+      options.always_print_primitive_fields = true;
+      options.preserve_proto_field_names = true;
+
+      google::protobuf::util::MessageToJsonString( t, &json_str, options );
       _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
       _e.do_message_substitution();
       return *this;
    }
 
    template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( const std::string& key, T&& t )
    {
       return this->operator()( key, t );
    }
 
    template< typename T >
-   typename std::enable_if< !std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< !std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( const std::string& key, const T& t )
    {
       _j[key] = t;
@@ -169,26 +172,31 @@ struct json_initializer
    }
 
    template< typename T >
-   typename std::enable_if< !std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< !std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( const std::string& key, T&& t )
    {
       return this->operator()( key, t );
    }
 
    template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( const T& t )
    {
-      capnp::JsonCodec c;
-      c.handleByAnnotation( capnp::Schema::from< typename T::Builds >() );
-      auto json_str = c.encode( t );
+      std::string json_str;
+
+      google::protobuf::util::JsonPrintOptions options;
+      options.add_whitespace = true;
+      options.always_print_primitive_fields = true;
+      options.preserve_proto_field_names = true;
+
+      google::protobuf::util::MessageToJsonString( t, &json_str, options );
       _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
       _e.do_message_substitution();
       return *this;
    }
 
    template< typename T >
-   typename std::enable_if< std::is_class< typename T::Builds >::value, json_initializer& >::type
+   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
    operator()( T&& t )
    {
       return this->operator()( t );

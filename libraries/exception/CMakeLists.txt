@@ -1,12 +1,12 @@
 file(GLOB HEADERS "include/koinos/*.hpp")
 
-find_package(CapnProto CONFIG REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(koinos_log CONFIG REQUIRED)
 find_package(Boost CONFIG REQUIRED log log_setup filesystem)
 
 add_library(koinos_exception ${HEADERS} exception.cpp)
-target_link_libraries(koinos_exception Koinos::log CapnProto::capnp-json nlohmann_json::nlohmann_json ${CMAKE_DL_LIBS})
+target_link_libraries(koinos_exception Koinos::log nlohmann_json::nlohmann_json protobuf::libprotobuf ${CMAKE_DL_LIBS})
 target_include_directories(koinos_exception PUBLIC
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>

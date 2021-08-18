@@ -50,7 +50,7 @@ endfunction()
 parse_unit_tests(TEST_CASES ${UNIT_TESTS})
 
 add_boost_test(koinos_exception_tests
-   SOURCES ${UNIT_TESTS} ${TEST_FIXTURES} tests/test_object.capnp.c++
+   SOURCES ${UNIT_TESTS} ${TEST_FIXTURES} tests/test_object.pb.cc
    TESTS ${TEST_CASES}
 )
 
