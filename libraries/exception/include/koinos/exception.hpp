@@ -4,6 +4,7 @@
 #include <boost/exception/all.hpp>
 #include <boost/stacktrace.hpp>
 
+#include <google/protobuf/message.h>
 #include <google/protobuf/util/json_util.h>
 
 #include <nlohmann/json.hpp>
@@ -134,37 +135,12 @@ struct json_initializer
    json_initializer() = delete;
    json_initializer( exception& e );
 
+   json_initializer& operator()( const std::string& key, const google::protobuf::Message& m );
    json_initializer& operator()( const std::string& key, const char* c );
-   json_initializer& operator()( const std::string& key, size_t v );
-   json_initializer& operator()();
 
    template< typename T >
-   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( const std::string& key, const T& t )
-   {
-      std::string json_str;
-
-      google::protobuf::util::JsonPrintOptions options;
-      options.add_whitespace = true;
-      options.always_print_primitive_fields = true;
-      options.preserve_proto_field_names = true;
-
-      google::protobuf::util::MessageToJsonString( t, &json_str, options );
-      _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( const std::string& key, T&& t )
-   {
-      return this->operator()( key, t );
-   }
-
-   template< typename T >
-   typename std::enable_if_t< !std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( const std::string& key, const T& t )
+   std::enable_if_t< std::is_integral_v< T >, json_initializer& >
+   operator()( const std::string& key, T t )
    {
       _j[key] = t;
       _e.do_message_substitution();
@@ -172,35 +148,18 @@ struct json_initializer
    }
 
    template< typename T >
-   typename std::enable_if_t< !std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( const std::string& key, T&& t )
+   std::enable_if_t< !std::is_base_of_v< google::protobuf::Message, T > && !std::is_integral_v< T >, json_initializer& >
+   operator()( const std::string& key, const T& t )
    {
-      return this->operator()( key, t );
-   }
-
-   template< typename T >
-   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( const T& t )
-   {
-      std::string json_str;
-
-      google::protobuf::util::JsonPrintOptions options;
-      options.add_whitespace = true;
-      options.always_print_primitive_fields = true;
-      options.preserve_proto_field_names = true;
-
-      google::protobuf::util::MessageToJsonString( t, &json_str, options );
-      _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
+      std::stringstream ss;
+      ss << t;
+      _j[key] = ss.str();
       _e.do_message_substitution();
       return *this;
    }
 
-   template< typename T >
-   typename std::enable_if_t< std::is_member_function_pointer_v< decltype( &T::SerializeToString ) >, json_initializer& >
-   operator()( T&& t )
-   {
-      return this->operator()( t );
-   }
+   json_initializer& operator()( const google::protobuf::Message& m );
+   json_initializer& operator()();
 };
 
 } } // koinos::detail

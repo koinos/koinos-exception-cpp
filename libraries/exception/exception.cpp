@@ -76,16 +76,37 @@ json_initializer::json_initializer( exception& e ) :
    _j(*boost::get_error_info< koinos::detail::json_info >(e))
 {}
 
-json_initializer& json_initializer::operator()( const std::string& key, const char* c )
+json_initializer& json_initializer::operator()( const std::string& key, const google::protobuf::Message& m )
 {
-   _j[key] = c;
+   google::protobuf::util::JsonPrintOptions options;
+   options.add_whitespace = true;
+   options.always_print_primitive_fields = true;
+   options.preserve_proto_field_names = true;
+
+   std::string json_str;
+   google::protobuf::util::MessageToJsonString( m, &json_str, options );
+   _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
    _e.do_message_substitution();
    return *this;
 }
 
-json_initializer& json_initializer::operator()( const std::string& key, size_t v )
+json_initializer& json_initializer::operator()( const google::protobuf::Message& m )
 {
-   _j[key] = v;
+   google::protobuf::util::JsonPrintOptions options;
+   options.add_whitespace = true;
+   options.always_print_primitive_fields = true;
+   options.preserve_proto_field_names = true;
+
+   std::string json_str;
+   google::protobuf::util::MessageToJsonString( m, &json_str, options );
+   _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
+   _e.do_message_substitution();
+   return *this;
+}
+
+json_initializer& json_initializer::operator()( const std::string& key, const char* c )
+{
+   _j[key] = c;
    _e.do_message_substitution();
    return *this;
 }

@@ -8,6 +8,18 @@
 
 struct exception_fixture {};
 
+struct simple_struct
+{
+   int x = 0;
+
+   friend std::ostream& operator<<( std::ostream&, const simple_struct& );
+};
+
+std::ostream& operator<<( std::ostream& out, const simple_struct& s )
+{
+   return out << s.x;
+}
+
 KOINOS_DECLARE_EXCEPTION( my_exception );
 
 BOOST_FIXTURE_TEST_SUITE( exception_tests, exception_fixture )
@@ -99,33 +111,24 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
    }
 
-   BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
+   BOOST_TEST_MESSAGE( "Throw an exception with an object capture." );
    try
    {
-      test_object outer_obj;
-      outer_obj.set_x( 3 );
-      outer_obj.set_y( 4 );
+      test_object obj;
+      obj.set_x( 1 );
+      obj.set_y( 2 );
 
-      try
-      {
-         test_object inner_obj;
-         inner_obj.set_x( 1 );
-         inner_obj.set_y( 2 );
-
-         KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", std::move( inner_obj )) );
-      }
-      KOINOS_CAPTURE_CATCH_AND_RETHROW( ("z", outer_obj) )
+      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", ("x", obj) );
    }
    catch( koinos::exception& e )
    {
       exception_json.clear();
       exception_json["x"]["x"] = 1;
       exception_json["x"]["y"] = 2;
-      exception_json["z"]["x"] = 3;
-      exception_json["z"]["y"] = 4;
       auto j = e.get_json();
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
+      BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit const object capture." );
@@ -146,21 +149,16 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
    }
 
-   BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit object capture." );
+   BOOST_TEST_MESSAGE( "Throw an exception with an object with a stream operator." );
    try
    {
-      test_object obj;
-      obj.set_x( 1 );
-      obj.set_y( 2 );
+      simple_struct obj = {1};
 
-      KOINOS_THROW( my_exception, "exception_test ${x} ${y}", (std::move( obj )) );
+      KOINOS_THROW( my_exception, "exception_test ${x}", ("x", obj) );
    }
    catch( koinos::exception& e )
    {
-      exception_json.clear();
-      exception_json["x"] = 1;
-      exception_json["y"] = 2;
-      BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1 2" );
+      BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
    }
 
