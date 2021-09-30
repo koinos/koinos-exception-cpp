@@ -82,7 +82,7 @@ if(COVERAGE)
      NAME coverage
      LCOV_ARGS "--quiet" "--no-external"
      EXECUTABLE koinos_exception_tests
-     EXCLUDE "libraries/vendor/*" "build/generated/*")
+     EXCLUDE "tests/*")
 endif()
 
 hunter_add_package(Boost COMPONENTS exception log test)
