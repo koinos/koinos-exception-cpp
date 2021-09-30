@@ -4,8 +4,12 @@
 #include <boost/exception/all.hpp>
 #include <boost/stacktrace.hpp>
 
+#include <google/protobuf/message.h>
+#include <google/protobuf/util/json_util.h>
+
+#include <nlohmann/json.hpp>
+
 #include <koinos/log.hpp>
-#include <koinos/pack/rt/json.hpp>
 
 #define _DETAIL_KOINOS_INIT_VA_ARGS( ... ) init __VA_ARGS__
 
@@ -103,7 +107,7 @@ struct exception : virtual boost::exception, virtual std::exception
       virtual const char* what() const noexcept override;
 
       std::string get_stacktrace() const;
-      const koinos::pack::json& get_json() const;
+      const nlohmann::json& get_json() const;
       const std::string& get_message() const;
 
    private:
@@ -115,10 +119,10 @@ struct exception : virtual boost::exception, virtual std::exception
 
 namespace detail {
 
-using json_info = boost::error_info< struct json_tag, koinos::pack::json >;
+using json_info = boost::error_info< struct json_tag, nlohmann::json >;
 using exception_stacktrace = boost::error_info< struct stacktrace_tag, boost::stacktrace::stacktrace >;
 
-std::string json_strpolate( const std::string& format_str, const koinos::pack::json& j );
+std::string json_strpolate( const std::string& format_str, const nlohmann::json& j );
 
 /**
  * Initializes a json object using a bubble list of key value pairs.
@@ -126,50 +130,36 @@ std::string json_strpolate( const std::string& format_str, const koinos::pack::j
 struct json_initializer
 {
    exception& _e;
-   koinos::pack::json& _j;
+   nlohmann::json& _j;
 
    json_initializer() = delete;
    json_initializer( exception& e );
 
+   json_initializer& operator()( const std::string& key, const google::protobuf::Message& m );
    json_initializer& operator()( const std::string& key, const char* c );
-   json_initializer& operator()( const std::string& key, size_t v );
+
+   template< typename T >
+   std::enable_if_t< std::is_integral_v< T >, json_initializer& >
+   operator()( const std::string& key, T t )
+   {
+      _j[key] = t;
+      _e.do_message_substitution();
+      return *this;
+   }
+
+   template< typename T >
+   std::enable_if_t< !std::is_base_of_v< google::protobuf::Message, T > && !std::is_integral_v< T >, json_initializer& >
+   operator()( const std::string& key, const T& t )
+   {
+      std::stringstream ss;
+      ss << t;
+      _j[key] = ss.str();
+      _e.do_message_substitution();
+      return *this;
+   }
+
+   json_initializer& operator()( const google::protobuf::Message& m );
    json_initializer& operator()();
-
-   template< typename T >
-   json_initializer& operator()( const std::string& key, T&& t )
-   {
-      koinos::pack::to_json( _j[key], std::forward< T >( t ) );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   json_initializer& operator()( const std::string& key, const T& t )
-   {
-      koinos::pack::to_json( _j[key], t );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   typename std::enable_if_t< !std::is_trivial_v< T >, json_initializer& > operator()( const T& t )
-   {
-      koinos::pack::json obj_json;
-      koinos::pack::to_json( obj_json, t );
-      _j.merge_patch( obj_json );
-      _e.do_message_substitution();
-      return *this;
-   }
-
-   template< typename T >
-   typename std::enable_if_t< !std::is_trivial_v< T >, json_initializer& > operator()( T&& t )
-   {
-      koinos::pack::json obj_json;
-      koinos::pack::to_json( obj_json, std::forward< T >( t ) );
-      _j.merge_patch( obj_json );
-      _e.do_message_substitution();
-      return *this;
-   }
 };
 
 } } // koinos::detail

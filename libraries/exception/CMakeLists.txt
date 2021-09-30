@@ -1,12 +1,7 @@
 file(GLOB HEADERS "include/koinos/*.hpp")
 
-find_package(nlohmann_json CONFIG REQUIRED)
-find_package(koinos_log CONFIG REQUIRED)
-find_Package(koinos_types CONFIG REQUIRED)
-find_package(Boost CONFIG REQUIRED log log_setup filesystem)
-
 add_library(koinos_exception ${HEADERS} exception.cpp)
-target_link_libraries(koinos_exception Koinos::types Koinos::log nlohmann_json::nlohmann_json ${CMAKE_DL_LIBS})
+target_link_libraries(koinos_exception Koinos::log Koinos::util nlohmann_json::nlohmann_json protobuf::libprotobuf ${CMAKE_DL_LIBS})
 target_include_directories(koinos_exception PUBLIC
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>
@@ -36,4 +31,3 @@ install(
    NAMESPACE Koinos::
    DESTINATION ${KOINOS_LIB_CONFIG_INSTALL_DIR}
 )
-
