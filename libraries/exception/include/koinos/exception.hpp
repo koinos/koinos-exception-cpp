@@ -15,11 +15,11 @@
 
 #define KOINOS_THROW( exception, msg, ... )                                      \
 do {                                                                             \
-   exception e(msg);                                                             \
-   koinos::detail::json_initializer init(e);                                     \
+   exception _e( msg );                                                          \
+   koinos::detail::json_initializer init( _e );                                  \
    _DETAIL_KOINOS_INIT_VA_ARGS( __VA_ARGS__ );                                   \
    BOOST_THROW_EXCEPTION(                                                        \
-      e                                                                          \
+      _e                                                                         \
       << koinos::detail::exception_stacktrace( boost::stacktrace::stacktrace() ) \
    );                                                                            \
 } while(0)
@@ -33,9 +33,9 @@ do {                                                                            
    } while (0)
 
 #define KOINOS_CAPTURE_CATCH_AND_RETHROW( ... ) \
-catch ( koinos::exception& e )                  \
+catch ( koinos::exception& _e )                 \
 {                                               \
-   koinos::detail::json_initializer init(e);    \
+   koinos::detail::json_initializer init( _e ); \
    _DETAIL_KOINOS_INIT_VA_ARGS( __VA_ARGS__ );  \
    throw;                                       \
 }                                               \
@@ -53,19 +53,19 @@ catch ( ... )                                   \
 }
 
 #define KOINOS_CATCH_LOG_AND_RETHROW( log_level )           \
-catch( koinos::exception& e )                               \
+catch( koinos::exception& _e )                              \
 {                                                           \
-   LOG( log_level ) << boost::diagnostic_information( e );  \
+   LOG( log_level ) << boost::diagnostic_information( _e ); \
    throw;                                                   \
 }                                                           \
-catch ( std::exception& e )                                 \
+catch ( std::exception& _e )                                \
 {                                                           \
-   LOG( log_level ) << e.what();                            \
+   LOG( log_level ) << _e.what();                           \
    throw;                                                   \
 }                                                           \
-catch ( boost::exception& e )                               \
+catch ( boost::exception& _e )                              \
 {                                                           \
-   LOG( log_level ) << boost::diagnostic_information( e );  \
+   LOG( log_level ) << boost::diagnostic_information( _e ); \
    throw;                                                   \
 }                                                           \
 catch ( ... )                                               \
@@ -75,17 +75,17 @@ catch ( ... )                                               \
 }
 
 #define KOINOS_CATCH_AND_LOG( log_level )                   \
-catch( koinos::exception& e )                               \
+catch( koinos::exception& _e )                              \
 {                                                           \
-   LOG( log_level ) << boost::diagnostic_information( e );  \
+   LOG( log_level ) << boost::diagnostic_information( _e ); \
 }                                                           \
-catch ( std::exception& e )                                 \
+catch ( std::exception& _e )                                \
 {                                                           \
-   LOG( log_level ) << e.what();                            \
+   LOG( log_level ) << _e.what();                           \
 }                                                           \
-catch ( boost::exception& e )                               \
+catch ( boost::exception& _e )                              \
 {                                                           \
-   LOG( log_level ) << boost::diagnostic_information( e );  \
+   LOG( log_level ) << boost::diagnostic_information( _e ); \
 }                                                           \
 catch ( ... )                                               \
 {                                                           \
@@ -93,16 +93,16 @@ catch ( ... )                                               \
 }
 
 #define KOINOS_CATCH_AND_GET_JSON( j ) \
-catch( koinos::exception& e )          \
+catch( koinos::exception& _e )         \
 {                                      \
-   j = e.get_json();                   \
+   j = _e.get_json();                   \
 }
 
 #define KOINOS_CATCH_LOG_AND_GET_JSON( log_level, j )       \
-catch( koinos::exception& e )                               \
+catch( koinos::exception& _e )                              \
 {                                                           \
    LOG( log_level ) << boost::diagnostic_information( e );  \
-   j = e.get_json();                                        \
+   j = _e.get_json();                                        \
 }
 
 #define KOINOS_DECLARE_EXCEPTION( exc_name )                         \
@@ -172,7 +172,7 @@ struct json_initializer
    nlohmann::json& _j;
 
    json_initializer() = delete;
-   json_initializer( exception& e );
+   json_initializer( exception& _e );
 
    json_initializer& operator()( const std::string& key, const google::protobuf::Message& m );
    json_initializer& operator()( const std::string& key, const char* c );
