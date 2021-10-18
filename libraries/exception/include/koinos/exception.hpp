@@ -33,10 +33,22 @@ do {                                                                            
    } while (0)
 
 #define KOINOS_CAPTURE_CATCH_AND_RETHROW( ... ) \
-catch( koinos::exception& e )                   \
+catch ( koinos::exception& e )                  \
 {                                               \
    koinos::detail::json_initializer init(e);    \
    _DETAIL_KOINOS_INIT_VA_ARGS( __VA_ARGS__ );  \
+   throw;                                       \
+}                                               \
+catch ( std::exception& )                       \
+{                                               \
+   throw;                                       \
+}                                               \
+catch ( boost::exception& )                     \
+{                                               \
+   throw;                                       \
+}                                               \
+catch ( ... )                                   \
+{                                               \
    throw;                                       \
 }
 
@@ -45,12 +57,39 @@ catch( koinos::exception& e )                               \
 {                                                           \
    LOG( log_level ) << boost::diagnostic_information( e );  \
    throw;                                                   \
+}                                                           \
+catch ( std::exception& e )                                 \
+{                                                           \
+   LOG( log_level ) << e.what();                            \
+   throw;                                                   \
+}                                                           \
+catch ( boost::exception& e )                               \
+{                                                           \
+   LOG( log_level ) << boost::diagnostic_information( e );  \
+   throw;                                                   \
+}                                                           \
+catch ( ... )                                               \
+{                                                           \
+   LOG( log_level ) << "caught unknown exception type";     \
+   throw;                                                   \
 }
 
 #define KOINOS_CATCH_AND_LOG( log_level )                   \
 catch( koinos::exception& e )                               \
 {                                                           \
    LOG( log_level ) << boost::diagnostic_information( e );  \
+}                                                           \
+catch ( std::exception& e )                                 \
+{                                                           \
+   LOG( log_level ) << e.what();                            \
+}                                                           \
+catch ( boost::exception& e )                               \
+{                                                           \
+   LOG( log_level ) << boost::diagnostic_information( e );  \
+}                                                           \
+catch ( ... )                                               \
+{                                                           \
+   LOG( log_level ) << "caught unknown exception type";     \
 }
 
 #define KOINOS_CATCH_AND_GET_JSON( j ) \
