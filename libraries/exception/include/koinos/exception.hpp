@@ -128,13 +128,18 @@ catch( koinos::exception& _e )                              \
 namespace koinos {
 
 // Forward declaration
-namespace detail { struct json_initializer; }
+namespace detail {
 
+struct json_initializer;
+using json_info = boost::error_info< struct json_tag, nlohmann::json >;
+using exception_stacktrace = boost::error_info< struct stacktrace_tag, boost::stacktrace::stacktrace >;
+
+} // detail
 
 struct exception : virtual boost::exception, virtual std::exception
 {
    private:
-      std::string msg;
+      mutable std::string msg;
 
    public:
       exception();
@@ -149,18 +154,19 @@ struct exception : virtual boost::exception, virtual std::exception
       const nlohmann::json& get_json() const;
       const std::string& get_message() const;
 
+      template< class T >
+      void add_json( const std::string& key, const T& value )
+      {
+         ( *boost::get_error_info< koinos::detail::json_info >( *this ) )[ key ] = value;
+      }
+
    private:
       friend struct detail::json_initializer;
 
-      void do_message_substitution();
+      void do_message_substitution() const;
 };
 
-
 namespace detail {
-
-using json_info = boost::error_info< struct json_tag, nlohmann::json >;
-using exception_stacktrace = boost::error_info< struct stacktrace_tag, boost::stacktrace::stacktrace >;
-
 std::string json_strpolate( const std::string& format_str, const nlohmann::json& j );
 
 /**
@@ -182,7 +188,6 @@ struct json_initializer
    operator()( const std::string& key, T t )
    {
       _j[key] = t;
-      _e.do_message_substitution();
       return *this;
    }
 
@@ -193,7 +198,6 @@ struct json_initializer
       std::stringstream ss;
       ss << t;
       _j[key] = ss.str();
-      _e.do_message_substitution();
       return *this;
    }
 

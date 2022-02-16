@@ -237,6 +237,31 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( e.get_stacktrace(), std::string() );
    }
 
+   BOOST_TEST_MESSAGE( "Throw an exception adding JSON via add_json API." );
+   try
+   {
+      KOINOS_THROW( my_exception, "An exception ${string}" );
+   }
+   catch( koinos::exception& e )
+   {
+      BOOST_REQUIRE_EQUAL( e.get_json(), nlohmann::json() );
+      BOOST_REQUIRE( e.get_stacktrace().size() > 0 );
+
+      std::vector< std::string > vec{ "alpha", "bravo", "charlie" };
+      e.add_json( "things", vec );
+
+      nlohmann::json j_array = nlohmann::json::array();
+      j_array.push_back( "alpha" );
+      j_array.push_back( "bravo" );
+      j_array.push_back( "charlie" );
+      BOOST_REQUIRE_EQUAL( e.get_json()[ "things" ], j_array );
+
+      e.add_json( "string", "delta" );
+      BOOST_REQUIRE_EQUAL( e.get_json()[ "string" ], "delta" );
+
+      BOOST_REQUIRE_EQUAL( e.what(), "An exception delta" );
+   }
+
 } KOINOS_CATCH_LOG_AND_RETHROW(info) }
 
 BOOST_AUTO_TEST_SUITE_END()
