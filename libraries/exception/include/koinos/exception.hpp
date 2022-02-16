@@ -139,7 +139,7 @@ using exception_stacktrace = boost::error_info< struct stacktrace_tag, boost::st
 struct exception : virtual boost::exception, virtual std::exception
 {
    private:
-      mutable std::string msg;
+      std::string msg;
 
    public:
       exception();
@@ -158,12 +158,13 @@ struct exception : virtual boost::exception, virtual std::exception
       void add_json( const std::string& key, const T& value )
       {
          ( *boost::get_error_info< koinos::detail::json_info >( *this ) )[ key ] = value;
+         do_message_substitution();
       }
 
    private:
       friend struct detail::json_initializer;
 
-      void do_message_substitution() const;
+      void do_message_substitution();
 };
 
 namespace detail {
@@ -188,6 +189,7 @@ struct json_initializer
    operator()( const std::string& key, T t )
    {
       _j[key] = t;
+      _e.do_message_substitution();
       return *this;
    }
 
@@ -198,6 +200,7 @@ struct json_initializer
       std::stringstream ss;
       ss << t;
       _j[key] = ss.str();
+      _e.do_message_substitution();
       return *this;
    }
 

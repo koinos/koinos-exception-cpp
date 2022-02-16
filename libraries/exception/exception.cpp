@@ -86,6 +86,7 @@ json_initializer& json_initializer::operator()( const std::string& key, const go
    std::string json_str;
    google::protobuf::util::MessageToJsonString( m, &json_str, options );
    _j[key] = nlohmann::json::parse( json_str.begin(), json_str.end() );
+   _e.do_message_substitution();
    return *this;
 }
 
@@ -99,12 +100,14 @@ json_initializer& json_initializer::operator()( const google::protobuf::Message&
    std::string json_str;
    google::protobuf::util::MessageToJsonString( m, &json_str, options );
    _j.merge_patch( nlohmann::json::parse( json_str.begin(), json_str.end() ) );
+   _e.do_message_substitution();
    return *this;
 }
 
 json_initializer& json_initializer::operator()( const std::string& key, const char* c )
 {
    _j[key] = c;
+   _e.do_message_substitution();
    return *this;
 }
 
@@ -125,7 +128,7 @@ exception::~exception() {}
 
 const char* exception::what() const noexcept
 {
-   return get_message().c_str();
+   return msg.c_str();
 }
 
 std::string exception::get_stacktrace() const
@@ -149,11 +152,10 @@ const nlohmann::json& exception::get_json() const
 
 const std::string& exception::get_message() const
 {
-   do_message_substitution();
    return msg;
 }
 
-void exception::do_message_substitution() const
+void exception::do_message_substitution()
 {
    msg = detail::json_strpolate( msg, *boost::get_error_info< koinos::detail::json_info >( *this ) );
 }
