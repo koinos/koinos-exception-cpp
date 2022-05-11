@@ -20,7 +20,7 @@ std::ostream& operator<<( std::ostream& out, const simple_struct& s )
    return out << s.x;
 }
 
-KOINOS_DECLARE_EXCEPTION( my_exception );
+KOINOS_DECLARE_EXCEPTION( my_exception, 12 );
 
 BOOST_FIXTURE_TEST_SUITE( exception_tests, exception_fixture )
 
@@ -80,6 +80,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test foo bar" );
       BOOST_REQUIRE_EQUAL( e.what(), e.get_message() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
@@ -109,6 +110,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
       auto j = e.get_json();
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an object capture." );
@@ -129,6 +131,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit const object capture." );
@@ -147,6 +150,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
       exception_json["y"] = 2;
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1 2" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an object with a stream operator." );
@@ -160,17 +164,19 @@ BOOST_AUTO_TEST_CASE( exception_test )
    {
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with a message that has been moved." );
    try
    {
       std::string msg = "moved exception message";
-      throw koinos::exception( std::move( msg ) );
+      throw koinos::exception( std::move( msg ), 88 );
    }
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "moved exception message", e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 88 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an escaped message." );
@@ -182,6 +188,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "An escaped message ${$escaped}", e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an embedded dollar sign." );
@@ -193,6 +200,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "A dollar signed $ within a message", e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with a std::size_t replacement." );
@@ -204,6 +212,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "My std::size_t value is 20", e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception and test for the existence of a stacktrace." );
@@ -224,6 +233,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "An exception ${with a malformed token", e.what() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception without using the provided macros." );
@@ -235,6 +245,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
    {
       BOOST_REQUIRE_EQUAL( e.get_json(), nlohmann::json() );
       BOOST_REQUIRE_EQUAL( e.get_stacktrace(), std::string() );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception adding JSON via add_json API." );
@@ -260,6 +271,7 @@ BOOST_AUTO_TEST_CASE( exception_test )
       BOOST_REQUIRE_EQUAL( e.get_json()[ "string" ], "delta" );
 
       BOOST_REQUIRE_EQUAL( e.what(), "An exception delta" );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 12 );
    }
 
 } KOINOS_CATCH_LOG_AND_RETHROW(info) }

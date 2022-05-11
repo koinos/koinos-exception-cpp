@@ -95,34 +95,34 @@ catch ( ... )                                               \
 #define KOINOS_CATCH_AND_GET_JSON( j ) \
 catch( koinos::exception& _e )         \
 {                                      \
-   j = _e.get_json();                   \
+   j = _e.get_json();                  \
 }
 
 #define KOINOS_CATCH_LOG_AND_GET_JSON( log_level, j )       \
 catch( koinos::exception& _e )                              \
 {                                                           \
    LOG( log_level ) << boost::diagnostic_information( e );  \
-   j = _e.get_json();                                        \
+   j = _e.get_json();                                       \
 }
 
-#define KOINOS_DECLARE_EXCEPTION( exc_name )                         \
+#define KOINOS_DECLARE_EXCEPTION( exc_name, code )                   \
    struct exc_name : public koinos::exception                        \
    {                                                                 \
-      exc_name() {}                                                  \
-      exc_name( const std::string& m ) : koinos::exception( m ) {}   \
-      exc_name( std::string&& m ) : koinos::exception( m ) {}        \
+      exc_name() : koinos::exception( code ) {}                                                  \
+      exc_name( const std::string& m ) : koinos::exception( m, code ) {}   \
+      exc_name( std::string&& m ) : koinos::exception( m, code ) {}        \
                                                                      \
       virtual ~exc_name() {};                                        \
    };
 
-#define KOINOS_DECLARE_DERIVED_EXCEPTION( exc_name, base )  \
-   struct exc_name : public base                            \
-   {                                                        \
-      exc_name() {}                                         \
-      exc_name( const std::string& m ) : base( m ) {}       \
-      exc_name( std::string&& m ) : base( m ) {}            \
-                                                            \
-      virtual ~exc_name() {};                               \
+#define KOINOS_DECLARE_DERIVED_EXCEPTION( exc_name, base, code )  \
+   struct exc_name : public base                                  \
+   {                                                              \
+      exc_name() : base( code ) {}                                               \
+      exc_name( const std::string& m ) : base( m, code ) {}             \
+      exc_name( std::string&& m ) : base( m, code ) {}                  \
+                                                                  \
+      virtual ~exc_name() {};                                     \
    };
 
 namespace koinos {
@@ -140,11 +140,12 @@ struct exception : virtual boost::exception, virtual std::exception
 {
    private:
       std::string msg;
+      int32_t code;
 
    public:
-      exception();
-      exception( const std::string& m );
-      exception( std::string&& m );
+      exception( const int32_t code );
+      exception( const std::string& m, const int32_t c );
+      exception( std::string&& m, const int32_t c );
 
       virtual ~exception();
 
@@ -153,6 +154,7 @@ struct exception : virtual boost::exception, virtual std::exception
       std::string get_stacktrace() const;
       const nlohmann::json& get_json() const;
       const std::string& get_message() const;
+      const int32_t get_code() const;
 
       template< class T >
       void add_json( const std::string& key, const T& value )
