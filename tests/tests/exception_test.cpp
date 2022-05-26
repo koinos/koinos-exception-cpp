@@ -28,7 +28,7 @@ KOINOS_DECLARE_DERIVED_EXCEPTION_WITH_CODE ( derived_code_exception, derived_exc
 BOOST_FIXTURE_TEST_SUITE( exception_tests, exception_fixture )
 
 template< typename E >
-void test_exception( uint32_t code )
+void test_exception( uint32_t expected_code )
 {
    nlohmann::json exception_json;
    exception_json["x"] = "foo";
@@ -84,7 +84,7 @@ void test_exception( uint32_t code )
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test foo bar" );
       BOOST_REQUIRE_EQUAL( e.what(), e.get_message() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an initial object capture and a missing capture." );
@@ -114,7 +114,7 @@ void test_exception( uint32_t code )
       auto j = e.get_json();
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an object capture." );
@@ -135,7 +135,7 @@ void test_exception( uint32_t code )
       BOOST_REQUIRE_EQUAL( exception_json, j );
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test {\"x\":1,\"y\":2} ${y}" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an initial implicit const object capture." );
@@ -154,7 +154,7 @@ void test_exception( uint32_t code )
       exception_json["y"] = 2;
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1 2" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an object with a stream operator." );
@@ -168,7 +168,7 @@ void test_exception( uint32_t code )
    {
       BOOST_REQUIRE_EQUAL( e.get_message(), "exception_test 1" );
       BOOST_REQUIRE_EQUAL( e.get_message(), e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with a message that has been moved." );
@@ -192,7 +192,7 @@ void test_exception( uint32_t code )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "An escaped message ${$escaped}", e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with an embedded dollar sign." );
@@ -204,7 +204,7 @@ void test_exception( uint32_t code )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "A dollar signed $ within a message", e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception with a std::size_t replacement." );
@@ -216,7 +216,7 @@ void test_exception( uint32_t code )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "My std::size_t value is 20", e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception and test for the existence of a stacktrace." );
@@ -237,7 +237,7 @@ void test_exception( uint32_t code )
    catch( koinos::exception& e )
    {
       BOOST_REQUIRE_EQUAL( "An exception ${with a malformed token", e.what() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception without using the provided macros." );
@@ -249,7 +249,7 @@ void test_exception( uint32_t code )
    {
       BOOST_REQUIRE_EQUAL( e.get_json(), nlohmann::json() );
       BOOST_REQUIRE_EQUAL( e.get_stacktrace(), std::string() );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
    BOOST_TEST_MESSAGE( "Throw an exception adding JSON via add_json API." );
@@ -275,7 +275,7 @@ void test_exception( uint32_t code )
       BOOST_REQUIRE_EQUAL( e.get_json()[ "string" ], "delta" );
 
       BOOST_REQUIRE_EQUAL( e.what(), "An exception delta" );
-      BOOST_REQUIRE_EQUAL( e.get_code(), code );
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 }
 
