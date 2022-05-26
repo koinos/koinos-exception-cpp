@@ -110,7 +110,7 @@ catch( koinos::exception& _e )                              \
    {                                                                 \
       exc_name() {}                                                  \
       exc_name( const std::string& m ) : koinos::exception( m ) {}   \
-      exc_name( std::string&& m ) : koinos::exception( m ) {}        \                                   
+      exc_name( std::string&& m ) : koinos::exception( m ) {}        \
                                                                      \
       virtual ~exc_name() {};                                        \
    };
