@@ -111,6 +111,8 @@ catch( koinos::exception& _e )                              \
       exc_name() {}                                                  \
       exc_name( const std::string& m ) : koinos::exception( m ) {}   \
       exc_name( std::string&& m ) : koinos::exception( m ) {}        \
+      exc_name( uint32_t code, const std::string& m ) : koinos::exception( code, m ) {}   \
+      exc_name( uint32_t code, const std::string&& m ) : koinos::exception( code, m ) {}  \
                                                                      \
       virtual ~exc_name() {};                                        \
    };
@@ -118,9 +120,11 @@ catch( koinos::exception& _e )                              \
 #define KOINOS_DECLARE_EXCEPTION_WITH_CODE( exc_name, c )                            \
    struct exc_name : public koinos::exception                                        \
    {                                                                                 \
-      exc_name() { set_code( c ); }                                                  \
-      exc_name( const std::string& m ) : koinos::exception( m ) { set_code( c ); }   \
-      exc_name( std::string&& m ) : koinos::exception( m ) { set_code( c ); }        \
+      exc_name() { }                                                  \
+      exc_name( const std::string& m ) : koinos::exception( c, m ) {}   \
+      exc_name( std::string&& m ) : koinos::exception( c, m ) {}        \
+      exc_name( uint32_t code, const std::string& m ) : koinos::exception( code, m ) {}   \
+      exc_name( uint32_t code, const std::string&& m ) : koinos::exception( code, m ) {}  \
                                                                                      \
       virtual ~exc_name() {};                                                        \
    };
@@ -129,8 +133,10 @@ catch( koinos::exception& _e )                              \
    struct exc_name : public base                                  \
    {                                                              \
       exc_name() {}                                               \
-      exc_name( const std::string& m ) : base( m ) {}             \
-      exc_name( std::string&& m ) : base( m ) {}                  \
+      exc_name( const std::string& m ) : base( m ) {}   \
+      exc_name( std::string&& m ) : base( m ) {}        \
+      exc_name( uint32_t code, const std::string& m ) : base( code, m ) {}   \
+      exc_name( uint32_t code, const std::string&& m ) : base( code, m ) {}  \
                                                                   \
       virtual ~exc_name() {};                                     \
    };
@@ -138,9 +144,11 @@ catch( koinos::exception& _e )                              \
 #define KOINOS_DECLARE_DERIVED_EXCEPTION_WITH_CODE( exc_name, base, c )   \
    struct exc_name : public base                                          \
    {                                                                      \
-      exc_name() { set_code( c ); }                                       \
-      exc_name( const std::string& m ) : base( m ) { set_code( c ); }     \
-      exc_name( std::string&& m ) : base( m ) { set_code( c ); }          \
+      exc_name() {  }                                       \
+      exc_name( const std::string& m ) : base( c, m ) {}   \
+      exc_name( std::string&& m ) : base( c, m ) {}        \
+      exc_name( uint32_t code, const std::string& m ) : base( code, m ) {}   \
+      exc_name( uint32_t code, const std::string&& m ) : base( code, m ) {}  \
                                                                           \
       virtual ~exc_name() {};                                             \
    };
@@ -164,6 +172,8 @@ struct exception : virtual boost::exception, virtual std::exception
 
    public:
       exception();
+      exception( uint32_t c, const std::string& m );
+      exception( uint32_t c, std::string&& m );
       exception( const std::string& m );
       exception( std::string&& m );
 
@@ -175,9 +185,6 @@ struct exception : virtual boost::exception, virtual std::exception
       const nlohmann::json& get_json() const;
       const std::string& get_message() const;
       const int32_t get_code() { return code; };
-      
-      void set_code( int32_t c ) { code = c; };
-      void set_message( const std::string& m ) { msg = m; };
 
       template< class T >
       void add_json( const std::string& key, const T& value )
