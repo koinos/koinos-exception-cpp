@@ -252,6 +252,20 @@ void test_exception( uint32_t expected_code )
       BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
 
+   BOOST_TEST_MESSAGE( "Throw an exception and change its code and message" );
+   try
+   {
+      throw E( "An exception" );
+   }
+   catch ( koinos::exception& e )
+   {
+      BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
+      e.set_code( 777 );
+      BOOST_REQUIRE_EQUAL( e.get_code(), 777 );
+      e.set_message( "New message" );
+      BOOST_REQUIRE_EQUAL( e.get_message(), "New message" );
+   }
+
    BOOST_TEST_MESSAGE( "Throw an exception adding JSON via add_json API." );
    try
    {
