@@ -105,52 +105,52 @@ catch( koinos::exception& _e )                              \
    j = _e.get_json();                                       \
 }
 
-#define KOINOS_DECLARE_EXCEPTION( exc_name )                         \
-   struct exc_name : public koinos::exception                        \
-   {                                                                 \
-      exc_name() {}                                                  \
-      exc_name( const std::string& m ) : koinos::exception( m ) {}   \
-      exc_name( std::string&& m ) : koinos::exception( m ) {}        \
+#define KOINOS_DECLARE_EXCEPTION( exc_name )                                              \
+   struct exc_name : public koinos::exception                                             \
+   {                                                                                      \
+      exc_name() {}                                                                       \
+      exc_name( const std::string& m ) : koinos::exception( m ) {}                        \
+      exc_name( std::string&& m ) : koinos::exception( m ) {}                             \
       exc_name( uint32_t code, const std::string& m ) : koinos::exception( code, m ) {}   \
       exc_name( uint32_t code, const std::string&& m ) : koinos::exception( code, m ) {}  \
-                                                                     \
-      virtual ~exc_name() {};                                        \
+                                                                                          \
+      virtual ~exc_name() {};                                                             \
    };
 
-#define KOINOS_DECLARE_EXCEPTION_WITH_CODE( exc_name, c )                            \
-   struct exc_name : public koinos::exception                                        \
-   {                                                                                 \
-      exc_name() { }                                                  \
-      exc_name( const std::string& m ) : koinos::exception( c, m ) {}   \
-      exc_name( std::string&& m ) : koinos::exception( c, m ) {}        \
+#define KOINOS_DECLARE_EXCEPTION_WITH_CODE( exc_name, c )                                 \
+   struct exc_name : public koinos::exception                                             \
+   {                                                                                      \
+      exc_name() { }                                                                      \
+      exc_name( const std::string& m ) : koinos::exception( c, m ) {}                     \
+      exc_name( std::string&& m ) : koinos::exception( c, m ) {}                          \
       exc_name( uint32_t code, const std::string& m ) : koinos::exception( code, m ) {}   \
       exc_name( uint32_t code, const std::string&& m ) : koinos::exception( code, m ) {}  \
-                                                                                     \
-      virtual ~exc_name() {};                                                        \
+                                                                                          \
+      virtual ~exc_name() {};                                                             \
    };
 
-#define KOINOS_DECLARE_DERIVED_EXCEPTION( exc_name, base )        \
-   struct exc_name : public base                                  \
-   {                                                              \
-      exc_name() {}                                               \
-      exc_name( const std::string& m ) : base( m ) {}   \
-      exc_name( std::string&& m ) : base( m ) {}        \
+#define KOINOS_DECLARE_DERIVED_EXCEPTION( exc_name, base )                   \
+   struct exc_name : public base                                             \
+   {                                                                         \
+      exc_name() {}                                                          \
+      exc_name( const std::string& m ) : base( m ) {}                        \
+      exc_name( std::string&& m ) : base( m ) {}                             \
       exc_name( uint32_t code, const std::string& m ) : base( code, m ) {}   \
       exc_name( uint32_t code, const std::string&& m ) : base( code, m ) {}  \
-                                                                  \
-      virtual ~exc_name() {};                                     \
+                                                                             \
+      virtual ~exc_name() {};                                                \
    };
 
-#define KOINOS_DECLARE_DERIVED_EXCEPTION_WITH_CODE( exc_name, base, c )   \
-   struct exc_name : public base                                          \
-   {                                                                      \
-      exc_name() {  }                                       \
-      exc_name( const std::string& m ) : base( c, m ) {}   \
-      exc_name( std::string&& m ) : base( c, m ) {}        \
+#define KOINOS_DECLARE_DERIVED_EXCEPTION_WITH_CODE( exc_name, base, c )      \
+   struct exc_name : public base                                             \
+   {                                                                         \
+      exc_name() {  }                                                        \
+      exc_name( const std::string& m ) : base( c, m ) {}                     \
+      exc_name( std::string&& m ) : base( c, m ) {}                          \
       exc_name( uint32_t code, const std::string& m ) : base( code, m ) {}   \
       exc_name( uint32_t code, const std::string&& m ) : base( code, m ) {}  \
-                                                                          \
-      virtual ~exc_name() {};                                             \
+                                                                             \
+      virtual ~exc_name() {};                                                \
    };
 
 namespace koinos {
