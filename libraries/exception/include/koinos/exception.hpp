@@ -184,7 +184,7 @@ struct exception : virtual boost::exception, virtual std::exception
       std::string get_stacktrace() const;
       const nlohmann::json& get_json() const;
       const std::string& get_message() const;
-      const int32_t get_code() { return code; };
+      int32_t get_code() const { return code; };
 
       template< class T >
       void add_json( const std::string& key, const T& value )
