@@ -118,10 +118,10 @@ json_initializer& json_initializer::operator()()
 
 } // detail
 
-exception::exception()
+exception::exception( uint32_t c )
 {
    *this << koinos::detail::json_info( nlohmann::json() );
-   code = 1;
+   code = c;
 }
 
 exception::exception( uint32_t c, const std::string& m ) : exception()
