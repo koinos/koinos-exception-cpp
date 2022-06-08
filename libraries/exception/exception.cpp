@@ -118,11 +118,35 @@ json_initializer& json_initializer::operator()()
 
 } // detail
 
-exception::exception() { *this << koinos::detail::json_info( nlohmann::json() ); }
+exception::exception( uint32_t c )
+{
+   *this << koinos::detail::json_info( nlohmann::json() );
+   code = c;
+}
 
-exception::exception( const std::string& m ) : exception() { msg = m; }
+exception::exception( uint32_t c, const std::string& m ) : exception()
+{
+   code = c;
+   msg = m;
+}
 
-exception::exception( std::string&& m ) : exception() { msg = std::move( m ); }
+exception::exception( uint32_t c, std::string&& m ) : exception()
+{
+   code = c;
+   msg = std::move( m );
+}
+
+exception::exception( const std::string& m ) : exception()
+{
+   code = 1;
+   msg = m;
+}
+
+exception::exception( std::string&& m ) : exception()
+{
+   code = 1;
+   msg = std::move( m );
+}
 
 exception::~exception() {}
 
