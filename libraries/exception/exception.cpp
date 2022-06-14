@@ -118,41 +118,65 @@ json_initializer& json_initializer::operator()()
 
 } // detail
 
-exception::exception( uint32_t c )
+exception::exception( int32_t c )
 {
    *this << koinos::detail::json_info( nlohmann::json() );
    code = c;
 }
 
-exception::exception( uint32_t c, const std::string& m ) : exception()
+exception::exception( int32_t c, const std::string& m ) : exception()
 {
    code = c;
-   msg = m;
+   data.set_message( m );
 }
 
-exception::exception( uint32_t c, std::string&& m ) : exception()
+exception::exception( int32_t c, std::string&& m ) : exception()
 {
    code = c;
-   msg = std::move( m );
+   data.set_message( std::move( m ) );
 }
 
 exception::exception( const std::string& m ) : exception()
 {
    code = 1;
-   msg = m;
+   data.set_message( m );
 }
 
 exception::exception( std::string&& m ) : exception()
 {
    code = 1;
-   msg = std::move( m );
+   data.set_message( std::move( m ) );
+}
+
+exception::exception( int32_t c, const chain::error_data& d ) : exception()
+{
+   code = c;
+   data = d;
+}
+
+exception::exception( int32_t c, chain::error_data&& d ) : exception()
+{
+   code = c;
+   data = std::move( d );
+}
+
+exception::exception( const chain::error_data& d ) : exception()
+{
+   code = 1;
+   data = d;
+}
+
+exception::exception( chain::error_data&& d ) : exception()
+{
+   code = 1;
+   data = std::move( d );
 }
 
 exception::~exception() {}
 
 const char* exception::what() const noexcept
 {
-   return msg.c_str();
+   return data.message().c_str();
 }
 
 std::string exception::get_stacktrace() const
@@ -176,12 +200,17 @@ const nlohmann::json& exception::get_json() const
 
 const std::string& exception::get_message() const
 {
-   return msg;
+   return data.message();
+}
+
+const chain::error_data& exception::get_data() const
+{
+   return data;
 }
 
 void exception::do_message_substitution()
 {
-   msg = detail::json_strpolate( msg, *boost::get_error_info< koinos::detail::json_info >( *this ) );
+   data.set_message( detail::json_strpolate( get_message(), *boost::get_error_info< koinos::detail::json_info >( *this ) ) );
 }
 
 } // koinos

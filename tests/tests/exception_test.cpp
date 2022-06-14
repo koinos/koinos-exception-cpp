@@ -277,6 +277,20 @@ void test_exception( uint32_t expected_code )
       BOOST_REQUIRE_EQUAL( e.what(), "An exception delta" );
       BOOST_REQUIRE_EQUAL( e.get_code(), expected_code );
    }
+
+   BOOST_TEST_MESSAGE( "Check throwing an exception with error_data" );
+   koinos::chain::error_data error;
+   error.set_message( "test message" );
+
+   try
+   {
+      throw E( error );
+   }
+   catch( koinos::exception& e )
+   {
+      BOOST_CHECK_EQUAL( e.get_message(), error.message() );
+      BOOST_CHECK_EQUAL( e.get_data().message(), error.message() );
+   }
 }
 
 BOOST_AUTO_TEST_CASE( exception_test )
