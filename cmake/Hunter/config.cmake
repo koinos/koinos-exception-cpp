@@ -34,3 +34,8 @@ hunter_config(koinos_util
    CMAKE_ARGS
       BUILD_TESTS=OFF
 )
+
+hunter_config(koinos_proto
+   URL  "https://github.com/koinos/koinos-proto-cpp/archive/5b1e1933d4b19e866325779fb6b0be617fe32b00.tar.gz"
+   SHA1 "b5c98e2795d731d2dabf2cc0daa23c019fcf4b52"
+)
