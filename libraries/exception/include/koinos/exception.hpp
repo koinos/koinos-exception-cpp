@@ -12,6 +12,7 @@
 #include <koinos/log.hpp>
 
 #include <koinos/chain/chain.pb.h>
+#include <koinos/chain/error.pb.h>
 
 #define _DETAIL_KOINOS_INIT_VA_ARGS( ... ) init __VA_ARGS__
 
@@ -264,4 +265,14 @@ struct json_initializer
    json_initializer& operator()();
 };
 
-} } // koinos::detail
+} // koinos::detail
+
+namespace chain {
+
+KOINOS_DECLARE_EXCEPTION_WITH_CODE( reversion_exception, reversion );
+KOINOS_DECLARE_EXCEPTION_WITH_CODE( failure_exception, failure );
+KOINOS_DECLARE_EXCEPTION_WITH_CODE( success_exception, success );
+
+} // koinos::chain
+
+} // koinos
