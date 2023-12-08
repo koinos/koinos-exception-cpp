@@ -27,6 +27,8 @@ project(koinos_exception
   DESCRIPTION "The Koinos exception library"
   LANGUAGES CXX C)
 
+koinos_define_version()
+
 koinos_coverage(
   EXECUTABLE
     koinos_exception_tests
