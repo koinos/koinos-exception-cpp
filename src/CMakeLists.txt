@@ -19,13 +19,15 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-koinos_add_format_target(exception)
+koinos_add_format(TARGET exception)
 
 add_library(Koinos::exception ALIAS exception)
+
+koinos_install(TARGETS exception)
 
 install(
   DIRECTORY
     ${PROJECT_SOURCE_DIR}/include
   DESTINATION
-    include/
+    ${CMAKE_INSTALL_PREFIX}
 )
