@@ -1,5 +1,5 @@
 add_library(exception
-  exception.cpp
+  koinos/exception.cpp
 
   ${PROJECT_SOURCE_DIR}/include/koinos/exception.hpp)
 
