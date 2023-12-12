@@ -35,12 +35,7 @@ koinos_add_package(Boost CONFIG REQUIRED
 
 koinos_add_package(Protobuf CONFIG REQUIRED)
 koinos_add_package(nlohmann_json CONFIG REQUIRED)
-koinos_add_package(yaml-cpp CONFIG REQUIRED)
 koinos_add_package(gRPC CONFIG REQUIRED)
-koinos_add_package(abseil NAME absl CONFIG REQUIRED)
-koinos_add_package(re2 CONFIG REQUIRED)
-koinos_add_package(c-ares CONFIG REQUIRED)
-koinos_add_package(ZLIB CONFIG REQUIRED)
 
 koinos_add_package(koinos_util CONFIG REQUIRED)
 koinos_add_package(koinos_log CONFIG REQUIRED)

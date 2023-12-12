@@ -16,8 +16,7 @@ target_include_directories(
   exception
     PUBLIC
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-      $<INSTALL_INTERFACE:include>
-)
+      $<INSTALL_INTERFACE:include>)
 
 koinos_add_format(TARGET exception)
 
