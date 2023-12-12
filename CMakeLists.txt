@@ -30,12 +30,13 @@ project(koinos_exception
 koinos_define_version()
 
 koinos_add_package(Boost CONFIG REQUIRED
-  ADD_COMPONENTS exception log test
-  FIND_COMPONENTS exception log log_setup)
+  ADD_COMPONENTS exception program_options log test
+  FIND_COMPONENTS exception program_options log log_setup)
 
 koinos_add_package(Protobuf CONFIG REQUIRED)
 koinos_add_package(nlohmann_json CONFIG REQUIRED)
 koinos_add_package(gRPC CONFIG REQUIRED)
+koinos_add_package(yaml-cpp CONFIG REQUIRED)
 
 koinos_add_package(koinos_util CONFIG REQUIRED)
 koinos_add_package(koinos_log CONFIG REQUIRED)
