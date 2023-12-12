@@ -6,8 +6,8 @@ add_library(exception
 target_link_libraries(
   exception
     PUBLIC
+      Boost::exception
       Koinos::log
-      Koinos::util
       Koinos::proto
       nlohmann_json::nlohmann_json
       protobuf::libprotobuf)
@@ -29,5 +29,4 @@ install(
   DIRECTORY
     ${PROJECT_SOURCE_DIR}/include
   DESTINATION
-    ${CMAKE_INSTALL_PREFIX}
-)
+    ${CMAKE_INSTALL_PREFIX})
