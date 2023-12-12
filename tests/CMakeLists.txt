@@ -14,9 +14,10 @@ koinos_add_test(
 
 target_link_libraries(exception_tests PRIVATE Koinos::exception)
 
-target_include_directories(exception_tests PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+target_include_directories(
+  exception_tests
+    PRIVATE
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests>)
 
 koinos_add_format(
   TARGET
