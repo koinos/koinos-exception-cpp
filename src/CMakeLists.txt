@@ -20,8 +20,6 @@ target_include_directories(
 
 koinos_add_format(TARGET exception)
 
-add_library(Koinos::exception ALIAS exception)
-
 koinos_install(TARGETS exception)
 
 install(
