@@ -12,7 +12,7 @@ koinos_add_test(
       test_object.pb.cc
       test_object.pb.h)
 
-target_link_libraries(exception_tests PRIVATE Koinos::exception)
+target_link_libraries(exception_tests PRIVATE exception)
 
 target_include_directories(
   exception_tests
