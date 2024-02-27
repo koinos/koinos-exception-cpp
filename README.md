@@ -35,17 +35,17 @@ cmake -D CMAKE_BUILD_TYPE=Debug -D STATIC_ANALYSIS=ON ..
 
 ### Testing
 
-Tests are built by default as target `koinos_exception_tests`. You can building them specifically with:
+Tests are built by default as target `exception_tests`. You can building them specifically with:
 
 ```
-cmake --build . --config Release --parallel --target koinos_exception_tests
+cmake --build . --config Release --parallel --target exception_tests
 ```
 
 Tests can be invoked from the tests directiory within the build directory.
 
 ```
 cd tests
-./koinos_exception_tests
+./exception_tests
 ```
 
 Tests can also be ran in parallel using CTest.
@@ -66,7 +66,7 @@ You can run tests in different sanitizer profiles. Those profiles are None (Defa
 
 ```
 cmake -D CMAKE_BUILT_TYPE=Debug -D SANITIZER=Address ..
-cmake --build . --config Debug --parallel --target util_tests
+cmake --build . --config Debug --parallel --target exception_tests
 cd tests
 ctest -j
 ```
