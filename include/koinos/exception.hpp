@@ -346,12 +346,4 @@ struct json_initializer
 
 } // namespace detail
 
-namespace chain {
-
-KOINOS_DECLARE_EXCEPTION_WITH_CODE( reversion_exception, reversion );
-KOINOS_DECLARE_EXCEPTION_WITH_CODE( failure_exception, failure );
-KOINOS_DECLARE_EXCEPTION_WITH_CODE( success_exception, success );
-
-} // namespace chain
-
 } // namespace koinos
