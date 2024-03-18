@@ -276,6 +276,7 @@ public:
   exception( int32_t c, chain::error_data&& d );
   exception( const chain::error_data& d );
   exception( chain::error_data&& d );
+  exception( const exception& e );
 
   virtual ~exception();
 

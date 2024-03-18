@@ -184,6 +184,21 @@ void test_exception( uint32_t expected_code )
     BOOST_REQUIRE_EQUAL( e.get_code(), 1 );
   }
 
+  BOOST_TEST_MESSAGE( "Throw a copied exception." );
+  try
+  {
+    std::string msg = "copied exception message";
+    KOINOS_THROW( koinos::exception, "copied exception messaged, ${x}", ("x", 10) );
+  }
+  catch( const koinos::exception& e )
+  {
+    koinos::exception copied_exception( e );
+    BOOST_REQUIRE_EQUAL( e.get_message(), copied_exception.get_message() );
+    BOOST_REQUIRE_EQUAL( e.get_code(), copied_exception.get_code() );
+    BOOST_REQUIRE_EQUAL( e.get_json(), copied_exception.get_json() );
+    BOOST_REQUIRE_EQUAL( e.get_stacktrace(), copied_exception.get_stacktrace() );
+  }
+
   BOOST_TEST_MESSAGE( "Throw an exception with an escaped message." );
   try
   {
