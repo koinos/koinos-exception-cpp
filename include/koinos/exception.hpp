@@ -139,6 +139,9 @@
     exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
         koinos::exception( code, d )                                                                                   \
     {}                                                                                                                 \
+    exc_name( const koinos::exception& e ):                                                                            \
+        koinos::exception( e )                                                                                         \
+    {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
   };
@@ -172,6 +175,9 @@
     {}                                                                                                                 \
     exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
         koinos::exception( code, d )                                                                                   \
+    {}                                                                                                                 \
+    exc_name( const koinos::exception& e ):                                                                            \
+        koinos::exception( e )                                                                                         \
     {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
@@ -210,6 +216,9 @@
     exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
         base( code, d )                                                                                                \
     {}                                                                                                                 \
+    exc_name( const koinos::exception& e ):                                                                            \
+        koinos::exception( e )                                                                                         \
+    {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
   };
@@ -243,6 +252,9 @@
     {}                                                                                                                 \
     exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
         base( code, d )                                                                                                \
+    {}                                                                                                                 \
+    exc_name( const koinos::exception& e ):                                                                            \
+        koinos::exception( e )                                                                                         \
     {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
