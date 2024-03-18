@@ -188,7 +188,7 @@ void test_exception( uint32_t expected_code )
   try
   {
     std::string msg = "copied exception message";
-    KOINOS_THROW( koinos::exception, "copied exception messaged, ${x}", ("x", 10) );
+    KOINOS_THROW( koinos::exception, "copied exception messaged, ${x}", ( "x", 10 ) );
   }
   catch( const koinos::exception& e )
   {

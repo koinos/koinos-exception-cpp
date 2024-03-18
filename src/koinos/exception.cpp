@@ -183,7 +183,7 @@ exception::exception( chain::error_data&& d ):
   data = std::move( d );
 }
 
-exception::exception( const exception& e):
+exception::exception( const exception& e ):
     boost::exception( e ),
     std::exception( e )
 {
