@@ -217,7 +217,7 @@
         base( code, d )                                                                                                \
     {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
-        koinos::exception( e )                                                                                         \
+        base( e )                                                                                                      \
     {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
@@ -254,7 +254,7 @@
         base( code, d )                                                                                                \
     {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
-        koinos::exception( e )                                                                                         \
+        base( e )                                                                                                      \
     {}                                                                                                                 \
                                                                                                                        \
     virtual ~exc_name(){};                                                                                             \
