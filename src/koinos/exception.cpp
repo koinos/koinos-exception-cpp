@@ -121,81 +121,49 @@ json_initializer& json_initializer::operator()()
 
 } // namespace detail
 
-exception::exception( int32_t c )
+exception::exception( int32_t c ):
+    code( c )
 {
   *this << koinos::detail::json_info( nlohmann::json() );
-  code = c;
 }
 
 exception::exception( int32_t c, const std::string& m ):
-    exception()
+    exception( c )
 {
-  code = c;
-  data.set_message( m );
+  message = m;
 }
 
 exception::exception( int32_t c, std::string&& m ):
-    exception()
+    exception( c )
 {
-  code = c;
-  data.set_message( std::move( m ) );
+  message = m;
 }
 
 exception::exception( const std::string& m ):
     exception()
 {
-  code = 1;
-  data.set_message( m );
+  message = m;
 }
 
 exception::exception( std::string&& m ):
     exception()
 {
-  code = 1;
-  data.set_message( std::move( m ) );
-}
-
-exception::exception( int32_t c, const chain::error_data& d ):
-    exception()
-{
-  code = c;
-  data = d;
-}
-
-exception::exception( int32_t c, chain::error_data&& d ):
-    exception()
-{
-  code = c;
-  data = std::move( d );
-}
-
-exception::exception( const chain::error_data& d ):
-    exception()
-{
-  code = 1;
-  data = d;
-}
-
-exception::exception( chain::error_data&& d ):
-    exception()
-{
-  code = 1;
-  data = std::move( d );
+  message = m;
 }
 
 exception::exception( const exception& e ):
     boost::exception( e ),
     std::exception( e )
 {
-  code = e.code;
-  data = e.data;
+  code    = e.code;
+  message = e.message;
 }
 
 exception::~exception() {}
 
 const char* exception::what() const noexcept
 {
-  return data.message().c_str();
+  return message.c_str();
 }
 
 std::string exception::get_stacktrace() const
@@ -219,18 +187,12 @@ const nlohmann::json& exception::get_json() const
 
 const std::string& exception::get_message() const
 {
-  return data.message();
-}
-
-const chain::error_data& exception::get_data() const
-{
-  return data;
+  return message;
 }
 
 void exception::do_message_substitution()
 {
-  data.set_message(
-    detail::json_strpolate( get_message(), *boost::get_error_info< koinos::detail::json_info >( *this ) ) );
+  message = detail::json_strpolate( get_message(), *boost::get_error_info< koinos::detail::json_info >( *this ) );
 }
 
 } // namespace koinos

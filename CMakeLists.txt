@@ -31,7 +31,6 @@ koinos_add_package(yaml-cpp CONFIG REQUIRED)
 
 koinos_add_package(koinos_util CONFIG REQUIRED)
 koinos_add_package(koinos_log CONFIG REQUIRED)
-koinos_add_package(koinos_proto CONFIG REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(tests)
