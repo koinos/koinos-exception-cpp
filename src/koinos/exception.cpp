@@ -122,10 +122,9 @@ json_initializer& json_initializer::operator()()
 } // namespace detail
 
 exception::exception( int32_t c ):
-  code( c )
+    code( c )
 {
   *this << koinos::detail::json_info( nlohmann::json() );
-  code = c;
 }
 
 exception::exception( int32_t c, const std::string& m ):
@@ -156,7 +155,7 @@ exception::exception( const exception& e ):
     boost::exception( e ),
     std::exception( e )
 {
-  code = e.code;
+  code    = e.code;
   message = e.message;
 }
 
