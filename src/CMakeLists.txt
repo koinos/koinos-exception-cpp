@@ -8,7 +8,6 @@ target_link_libraries(
     PUBLIC
       Boost::exception
       Koinos::log
-      Koinos::proto
       nlohmann_json::nlohmann_json
       protobuf::libprotobuf)
 

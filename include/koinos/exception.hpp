@@ -11,9 +11,6 @@
 
 #include <koinos/log.hpp>
 
-#include <koinos/chain/chain.pb.h>
-#include <koinos/chain/error.pb.h>
-
 #define _DETAIL_KOINOS_INIT_VA_ARGS( ... ) init __VA_ARGS__
 
 #define KOINOS_THROW( exception, msg, ... )                                                                            \
@@ -127,18 +124,6 @@
     exc_name( int32_t code, const std::string&& m ):                                                                   \
         koinos::exception( code, m )                                                                                   \
     {}                                                                                                                 \
-    exc_name( const koinos::chain::error_data& d ):                                                                    \
-        koinos::exception( d )                                                                                         \
-    {}                                                                                                                 \
-    exc_name( koinos::chain::error_data&& d ):                                                                         \
-        koinos::exception( d )                                                                                         \
-    {}                                                                                                                 \
-    exc_name( int32_t code, const koinos::chain::error_data& d ):                                                      \
-        koinos::exception( code, d )                                                                                   \
-    {}                                                                                                                 \
-    exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
-        koinos::exception( code, d )                                                                                   \
-    {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
         koinos::exception( e )                                                                                         \
     {}                                                                                                                 \
@@ -163,18 +148,6 @@
     {}                                                                                                                 \
     exc_name( int32_t code, const std::string&& m ):                                                                   \
         koinos::exception( code, m )                                                                                   \
-    {}                                                                                                                 \
-    exc_name( const koinos::chain::error_data& d ):                                                                    \
-        koinos::exception( c, d )                                                                                      \
-    {}                                                                                                                 \
-    exc_name( koinos::chain::error_data&& d ):                                                                         \
-        koinos::exception( c, d )                                                                                      \
-    {}                                                                                                                 \
-    exc_name( int32_t code, const koinos::chain::error_data& d ):                                                      \
-        koinos::exception( code, d )                                                                                   \
-    {}                                                                                                                 \
-    exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
-        koinos::exception( code, d )                                                                                   \
     {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
         koinos::exception( e )                                                                                         \
@@ -204,18 +177,6 @@
     exc_name( int32_t code, const std::string&& m ):                                                                   \
         base( code, m )                                                                                                \
     {}                                                                                                                 \
-    exc_name( const koinos::chain::error_data& d ):                                                                    \
-        base( d )                                                                                                      \
-    {}                                                                                                                 \
-    exc_name( koinos::chain::error_data&& d ):                                                                         \
-        base( d )                                                                                                      \
-    {}                                                                                                                 \
-    exc_name( int32_t code, const koinos::chain::error_data& d ):                                                      \
-        base( code, d )                                                                                                \
-    {}                                                                                                                 \
-    exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
-        base( code, d )                                                                                                \
-    {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
         base( e )                                                                                                      \
     {}                                                                                                                 \
@@ -241,18 +202,6 @@
     exc_name( int32_t code, const std::string&& m ):                                                                   \
         base( code, m )                                                                                                \
     {}                                                                                                                 \
-    exc_name( const koinos::chain::error_data& d ):                                                                    \
-        base( c, d )                                                                                                   \
-    {}                                                                                                                 \
-    exc_name( koinos::chain::error_data&& d ):                                                                         \
-        base( c, d )                                                                                                   \
-    {}                                                                                                                 \
-    exc_name( int32_t code, const koinos::chain::error_data& d ):                                                      \
-        base( code, d )                                                                                                \
-    {}                                                                                                                 \
-    exc_name( int32_t code, koinos::chain::error_data&& d ):                                                           \
-        base( code, d )                                                                                                \
-    {}                                                                                                                 \
     exc_name( const koinos::exception& e ):                                                                            \
         base( e )                                                                                                      \
     {}                                                                                                                 \
@@ -275,8 +224,8 @@ struct exception: virtual boost::exception,
                   virtual std::exception
 {
 private:
-  chain::error_data data;
   int32_t code = 1;
+  std::string message;
 
 public:
   exception( int32_t c = 1 );
@@ -284,10 +233,6 @@ public:
   exception( int32_t c, std::string&& m );
   exception( const std::string& m );
   exception( std::string&& m );
-  exception( int32_t c, const chain::error_data& d );
-  exception( int32_t c, chain::error_data&& d );
-  exception( const chain::error_data& d );
-  exception( chain::error_data&& d );
   exception( const exception& e );
 
   virtual ~exception();
@@ -297,7 +242,6 @@ public:
   std::string get_stacktrace() const;
   const nlohmann::json& get_json() const;
   const std::string& get_message() const;
-  const chain::error_data& get_data() const;
 
   int32_t get_code() const
   {
