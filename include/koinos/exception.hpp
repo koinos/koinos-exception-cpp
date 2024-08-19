@@ -140,7 +140,7 @@
         koinos::exception( code, d )                                                                                   \
     {}                                                                                                                 \
                                                                                                                        \
-    virtual ~exc_name(){};                                                                                             \
+    virtual ~exc_name() {};                                                                                            \
   };
 
 #define KOINOS_DECLARE_EXCEPTION_WITH_CODE( exc_name, c )                                                              \
@@ -174,7 +174,7 @@
         koinos::exception( code, d )                                                                                   \
     {}                                                                                                                 \
                                                                                                                        \
-    virtual ~exc_name(){};                                                                                             \
+    virtual ~exc_name() {};                                                                                            \
   };
 
 #define KOINOS_DECLARE_DERIVED_EXCEPTION( exc_name, base )                                                             \
@@ -211,7 +211,7 @@
         base( code, d )                                                                                                \
     {}                                                                                                                 \
                                                                                                                        \
-    virtual ~exc_name(){};                                                                                             \
+    virtual ~exc_name() {};                                                                                            \
   };
 
 #define KOINOS_DECLARE_DERIVED_EXCEPTION_WITH_CODE( exc_name, base, c )                                                \
@@ -245,7 +245,7 @@
         base( code, d )                                                                                                \
     {}                                                                                                                 \
                                                                                                                        \
-    virtual ~exc_name(){};                                                                                             \
+    virtual ~exc_name() {};                                                                                            \
   };
 
 namespace koinos {
